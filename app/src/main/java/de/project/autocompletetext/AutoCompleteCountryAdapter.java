@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,10 +45,13 @@ public class AutoCompleteCountryAdapter extends ArrayAdapter<CountryItem> {
         ImageView imageViewFlag = convertView.findViewById(R.id.image_view_flag);
 
         CountryItem countryItem = getItem(position);
+        String countName = countryItem.getCountryName();
+        String imgUrl = countryItem.getImageUrl();
 
         if (countryItem != null) {
-            textViewName.setText(countryItem.getCountryName());
-            imageViewFlag.setImageResource(countryItem.getFlagImage());
+            textViewName.setText(countName);
+            Picasso.get().load(imgUrl).into(imageViewFlag);
+
         }
 
         return convertView;

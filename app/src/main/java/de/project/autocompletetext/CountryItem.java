@@ -2,18 +2,36 @@ package de.project.autocompletetext;
 
 public class CountryItem {
     private String countryName;
-    private int flagImage;
+    private String imageUrl;
 
-    public CountryItem(String countryName, int flagImage) {
+    public CountryItem(String countryName, String imageUrl) {
         this.countryName = countryName;
-        this.flagImage = flagImage;
+        this.imageUrl = imageUrl;
+
+
     }
 
     public String getCountryName() {
         return countryName;
     }
 
-    public int getFlagImage() {
-        return flagImage;
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    @Override
+    public String toString() {
+        return "CountryItem{" +
+                "countryName='" + countryName + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                '}';
     }
 }

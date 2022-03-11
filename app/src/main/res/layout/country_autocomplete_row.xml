@@ -7,9 +7,9 @@
 
     <ImageView
         android:id="@+id/image_view_flag"
+        android:background="#6868"
         android:layout_width="60dp"
-        android:layout_height="40dp"
-        tools:src="@drawable/flag_afghanistan" />
+        android:layout_height="40dp" />
 
     <TextView
         android:id="@+id/text_view_name"
