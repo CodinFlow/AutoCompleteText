@@ -3,41 +3,74 @@ package de.project.autocompletetext;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.AutoCompleteTextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
     private List<CountryItem> countryList;
+    RequestQueue mRequestQueue;
+    JsonObjectRequest request;
+    AutoCompleteTextView editText;
+    String Json_URL = "https://drive.google.com/uc?export=download&id=1VPuA4NzOsiasOQnhtbh9mz9b5a5xUbmD";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        countryList = new ArrayList<>();
+        editText = findViewById(R.id.actv);
         fillCountryList();
 
-        AutoCompleteTextView editText = findViewById(R.id.actv);
-        AutoCompleteCountryAdapter adapter = new AutoCompleteCountryAdapter(this, countryList);
-        editText.setAdapter(adapter);
+
     }
 
-    private void fillCountryList() {
-        countryList = new ArrayList<>();
+    public void fillCountryList() {
+        mRequestQueue = Volley.newRequestQueue(MainActivity.this);
+        request = new JsonObjectRequest(Request.Method.GET, Json_URL, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, "onResponse: successfully");
+                try {
+                    JSONArray autoCompleteArray = response.getJSONArray("auto_complete");
+                    for (int i = 0; i < autoCompleteArray.length(); i++) {
+                        JSONObject info = autoCompleteArray.getJSONObject(i);
+                        String countryName = info.getString("country_name");
+                        String flagUrl = info.getString("flag_url");
 
-        // TODO: 10/03/2022 URL FROM JSON
-      /*  for (int i = 0; i < jsonArray2.length(); i++) {
-            JSONObject chart = jsonArray2.getJSONObject(i);
+                        countryList.add(new CountryItem(countryName, flagUrl));
+                        Log.d(TAG, "Json Data: " + countryName);
 
-            String coverUrl2 = chart.getString("album_cover_url");
-            String artistName2 = chart.getString("artist_name");
+                        AutoCompleteCountryAdapter adapter = new AutoCompleteCountryAdapter(MainActivity.this, countryList);
+                        editText.setAdapter(adapter);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-            mList2.add(new Item(coverUrl2, artistName2));
-        }*/
-        countryList.add(new CountryItem("Afghanistan", "https://cdn.webshopapp.com/shops/94414/files/52406302/flag-of-morocco.jpg"));
-        countryList.add(new CountryItem("Albania", "https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Flag_of_Albania.svg/1200px-Flag_of_Albania.svg.png"));
-        countryList.add(new CountryItem("Algeria","https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Flag_of_Algeria.svg/1200px-Flag_of_Algeria.svg.png"));
-        countryList.add(new CountryItem("Andorra", "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Flag_of_Andorra.svg/1280px-Flag_of_Andorra.svg.png"));
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d(TAG, "onErrorResponse: Error!!!");
+                error.printStackTrace();
+            }
+        });
+        mRequestQueue.add(request);
     }
 }
